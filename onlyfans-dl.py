@@ -129,7 +129,7 @@ def download_media(media):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: ./onlyfans-dl <farrahabraham> <npjdevshojk3f2s6rrjfiub512>")
+        print("Usage: ./onlyfans-dl <farrahabraham> <npjdevshoub512>")
         print("See README for instructions.")
         exit()
 
