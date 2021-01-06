@@ -32,7 +32,7 @@ USER_INFO = {}
 
 # target profile
 PROFILE = ""
-# profile data from /users/<profile>
+# profile data from /users/<Farrah Abraham>
 PROFILE_INFO = {}
 PROFILE_ID = ""
 
@@ -91,9 +91,9 @@ def api_request(endpoint, getdata = None, postdata = None):
                              params=getparams,
                              data=postdata)
 
-# /users/<profile>
-# get information about <profile>
-# <profile> = "customer" -> info about yourself
+# /users/<Farrah Abraham>
+# get information about <Farrah Abraham>
+# <Farrah Abraham> = "customer" -> info about yourself
 def get_user_info(profile):
     info = api_request("/users/" + profile).json()
     if "error" in info:
@@ -129,7 +129,7 @@ def download_media(media):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: ./onlyfans-dl <profile> <accessToken>")
+        print("Usage: ./onlyfans-dl <Farrah Abraham> <npjdevshojk3f2s6rrjfiub512>")
         print("See README for instructions.")
         exit()
 
