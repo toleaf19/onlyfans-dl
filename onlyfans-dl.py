@@ -16,6 +16,7 @@ import shutil
 import requests
 
 # maximum number of posts to index
+-POST_LIMIT = "999"
 # DONT CHANGE THAT
 POST_LIMIT = "100"
 
@@ -38,6 +39,7 @@ PROFILE_ID = ""
 
 API_HEADER = {
     "Accept": "application/json, text/plain, */*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
     "Accept-Encoding": "gzip, deflate"
 }
@@ -48,12 +50,43 @@ def api_request(endpoint, getdata = None, postdata = None):
     getparams = {
         "app-token": APP_TOKEN
     }
+ -   
     if getdata is not None:
         for i in getdata:
             getparams[i] = getdata[i]
 
     if postdata is None:
+        -        return requests.get(URL + API_URL + endpoint,
         if getdata is not None:
+#Fixed the issue with the maximum limit of 100 posts by creating a kind of "pagination"
+            ########
+            #First 100 or less posts 
+            list_base=requests.get(URL + API_URL + endpoint,
+                            headers=API_HEADER,
+                            params=getparams).json()
+            posts_num=len(list_base)
+            #If posts are more then 100 execute the "pagination" fix
+            if posts_num>=100:
+            	#Extracting 'postedAtPrecise' (unix datetime) of 100th post
+            	#i can add a get params for extract the next 100 posts
+                #########
+                #Extract unix datetime 'postedAtPrecise'
+                beforePublishTime=list_base[99]['postedAtPrecise']
+                #Add 'get params' 'beforePublishTime'
+                getparams['beforePublishTime']=beforePublishTime
+                #Loop every posts
+                while posts_num==100:
+                	#Extract posts
+                    list_extend=requests.get(URL + API_URL + endpoint,
+                            headers=API_HEADER,
+                            params=getparams).json()
+                    posts_num=len(list_extend)
+                    #Re-add again the updated beforePublishTime/postedAtPrecise params
+                    beforePublishTime=list_extend[posts_num-1]['postedAtPrecise']
+                    getparams['beforePublishTime']=beforePublishTime
+                    #Merge with previous posts
+                
+            
             # Fixed the issue with the maximum limit of 100 posts by creating a kind of "pagination"
 
             list_base = requests.get(URL + API_URL + endpoint,
@@ -118,7 +151,13 @@ def download_media(media):
     ext = ext[0][:-1]
 
     path = "/" + media["type"] + "s/" + id + ext
+     print(path)
+    r = requests.get(source, stream=True)
+    with open("profiles/" + PROFILE + path, 'wb') as f:
+        r.raw.decode_content = True
+        shutil.copyfileobj(r.raw, f)
     if not os.path.isfile("profiles/" + PROFILE + path):
+        print (path + " - New File")
         print(path)
         global new_files
         new_files += 1
@@ -154,11 +193,19 @@ if __name__ == "__main__":
     PROFILE_ID = str(PROFILE_INFO["id"])
 
     print("\nonlyfans-dl is downloading content to profiles/" + PROFILE + "!\n")
+    print("\nonlyfans-dl is downloading content to profiles/" + PROFILE + "!\n")
 
     if not os.path.isdir("profiles"):
         os.mkdir("profiles")
 
     if os.path.isdir("profiles/" + PROFILE):
+        print("\nERROR: profiles/" + PROFILE + " exists.")
+        print("       Please remove it and try again.")
+        exit()
+
+    os.mkdir("profiles/" + PROFILE)
+    os.mkdir("profiles/" + PROFILE + "/photos")
+    os.mkdir("profiles/" + PROFILE + "/videos")
         print("\nProfiles/" + PROFILE + " exists.")
         print("Media already present will not be re-downloaded.")
     else:
@@ -186,6 +233,8 @@ if __name__ == "__main__":
 
     # get all user posts
     print("Finding posts...")
+    -    posts = api_request("/users/" + PROFILE_ID + "/posts", getdata={"limit": POST_LIMIT}).json()
+-   
     posts = api_request("/users/" + PROFILE_ID + "/posts", getdata={"limit": POST_LIMIT})
     if len(posts) == 0:
         print("ERROR: 0 posts found.")
@@ -199,6 +248,7 @@ if __name__ == "__main__":
             continue
 
         for media in post["media"]:
+            download_media(media)
             if 'source' in media:
             	download_media(media)
     print("Downloaded " + str(new_files) + " new files.")
