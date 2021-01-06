@@ -25,7 +25,7 @@ API_URL = "/api2/v2"
 
 #\TODO dynamically get app token
 # Note: this is not an auth token
-APP_TOKEN = "33d57ade8c02dbc5a333db99ff9ae26a"
+APP_TOKEN = 33d57ade8c02dbc5a333db99ff9ae26a
 
 # user info from /users/customer
 USER_INFO = {}
@@ -129,7 +129,7 @@ def download_media(media):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: ./onlyfans-dl <farrahabraham> <npjdevshoub512>")
+        print("Usage: ./onlyfans-dl <farrahabraham> <5mlffrl2uuiuhridt955e6iuva>")
         print("See README for instructions.")
         exit()
 
