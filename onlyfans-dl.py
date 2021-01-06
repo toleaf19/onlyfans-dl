@@ -25,7 +25,7 @@ API_URL = "/api2/v2"
 
 #\TODO dynamically get app token
 # Note: this is not an auth token
-APP_TOKEN = "oX19nSlm4bf56b75d768be79a672a7f3acbc15de"
+APP_TOKEN = "rx12105524.1603832009.8587E8CA268D4FC02EF8975BFC1C839C.1.1.1.1.1.1.1.1.1"
 
 # user info from /users/customer
 USER_INFO = {}
